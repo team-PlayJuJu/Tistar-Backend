@@ -6,11 +6,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
-
-import javax.annotation.processing.Generated;
 import java.util.Set;
 
-@Table(name = "User")
+@Table(name = "user")
 @Entity
 @Getter
 @Setter
@@ -21,10 +19,14 @@ public class User {
         @Column(name = "user_id")
         private int id;
 
+        @Column
         private String name;
 
         @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
         private String pwd;
+
+        @Column
+        private String myImage;
 
         @Column(name = "create_dt")
         private String createDt;

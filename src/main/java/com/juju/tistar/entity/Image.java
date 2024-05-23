@@ -13,8 +13,11 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
+    private Long userId;
+
     @Column(nullable = false)
-    private String url;
+    private String image;
 
     @Column
     private String content;
