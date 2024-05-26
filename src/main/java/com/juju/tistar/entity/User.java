@@ -23,6 +23,7 @@ public class User {
         private String name;
 
         @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+        @Column
         private String pwd;
 
         @Column
