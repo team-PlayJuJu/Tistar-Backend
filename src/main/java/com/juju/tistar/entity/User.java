@@ -3,6 +3,7 @@ package com.juju.tistar.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -27,7 +28,7 @@ public class User {
         private String pwd;
 
         @Column
-        private String myImage;
+        private String profile;
 
         @Column(name = "create_dt")
         private String createDt;

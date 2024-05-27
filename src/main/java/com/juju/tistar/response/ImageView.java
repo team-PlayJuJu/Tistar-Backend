@@ -11,6 +11,4 @@ import java.util.List;
 @Builder
 public class ImageView {
     private final List<String> images;
-    private final String content;
-    private final String tag;
 }
