@@ -1,7 +1,9 @@
 package com.juju.tistar.controller;
 
 import com.juju.tistar.entity.User;
+import com.juju.tistar.request.LoginRequest;
 import com.juju.tistar.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +20,8 @@ public class UserController {
         return ResponseEntity.ok(userService.signupUser(user));
     }
 
-    @GetMapping("/signin")
-    public String signin() {
-        return "로그인";
-    }
+//    @PostMapping("/signin")
+//    public ResponseEntity<LoginRequest> signin(@Valid @RequestBody LoginRequest loginRequest) {
+//
+//    }
 }
