@@ -6,7 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Table(name = "authorities")
+@Table(name = "authority")
 @Getter
 @Setter
 public class Authority {
