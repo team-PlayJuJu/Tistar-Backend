@@ -1,31 +1,25 @@
 package com.juju.tistar.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Setter
+@NoArgsConstructor
 @Entity
-@Table(name = "boardImage")
+@Table(name = "Image")
 public class Image {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "file_id")
     private Long id;
 
-    @Column
-    private Long userId;
-
-    @Column(nullable = false)
-    private String image;
+    @ManyToOne
+    @JoinColumn(name = "board_id")
+    private Post post;
 
     @Column
-    private String content;
-
-    @Column
-    private Long heart;
-
-    @Column
-    private String tag;
-
+    private String imgUrl;
 }
