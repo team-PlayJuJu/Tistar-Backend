@@ -1,8 +1,8 @@
 package com.juju.tistar.config;
 import com.juju.tistar.filter.AuthoritiesLoggingAfterFilter;
 import com.juju.tistar.filter.CsrfCookieFilter;
-import com.juju.tistar.filter.JWTTokenGeneratorFilter;
-import com.juju.tistar.filter.JWTTokenValidatorFilter;
+import com.juju.tistar.filter.JWTGeneratorFilter;
+import com.juju.tistar.filter.JWTValidatorFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,8 +42,8 @@ public class WebSecurityConfig {
                     }
                 })).csrf((csrf) -> csrf.csrfTokenRequestHandler(requestHandler).ignoringRequestMatchers("")
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
-                .addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
-                .addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
+                .addFilterAfter(new JWTGeneratorFilter(), BasicAuthenticationFilter.class)
+                .addFilterBefore(new JWTValidatorFilter(), BasicAuthenticationFilter.class)
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .addFilterAfter(new AuthoritiesLoggingAfterFilter(), BasicAuthenticationFilter.class);
         http.authorizeHttpRequests((requests) -> requests
