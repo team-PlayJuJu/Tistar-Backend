@@ -1,9 +1,7 @@
 package com.juju.tistar.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -11,12 +9,11 @@ import org.hibernate.annotations.GenericGenerator;
 @Table(name = "authority")
 @Getter
 @Setter
-@Builder
-@RequiredArgsConstructor
 public class Authority {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
     private Long id;
 
     private String name;
