@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
+public class JWTGeneratorFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,

@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import java.util.Set;
@@ -13,6 +15,8 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+@Builder
+@RequiredArgsConstructor
 public class User {
         @Id
         @GeneratedValue(strategy= GenerationType.AUTO,generator="native")
@@ -29,9 +33,6 @@ public class User {
 
         @Column
         private String profile;
-
-        @Column(name = "create_dt")
-        private String createDt;
 
         @JsonIgnore
         @OneToMany(mappedBy="user",fetch=FetchType.EAGER)
