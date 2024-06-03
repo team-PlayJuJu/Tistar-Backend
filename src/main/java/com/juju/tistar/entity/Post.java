@@ -28,9 +28,9 @@ public class Post {
     private String tag;
 
     @OneToMany(
-            mappedBy = "Post",
+            mappedBy = "post",
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
             orphanRemoval = true
     )
-    private List<Image> photo = new ArrayList<>();
+    private List<Image> images = new ArrayList<>();
 }
