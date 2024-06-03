@@ -14,7 +14,8 @@ public class PostController {
 
     @GetMapping("/home")
     public String home() {
-        return "image";
+        System.out.println("ang");
+        return "images";
     }
 
     @GetMapping("/{userId}/myPage")
