@@ -2,10 +2,14 @@ package com.juju.tistar.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.juju.tistar.entity.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.security.core.GrantedAuthority;
+
+import java.util.List;
 import java.util.Set;
 
 @Table(name = "user")
@@ -17,22 +21,17 @@ import java.util.Set;
 @NoArgsConstructor
 public class User {
         @Id
-        @GeneratedValue(strategy= GenerationType.AUTO,generator="native")
-        @GenericGenerator(name = "native",strategy = "native")
+        @GeneratedValue(strategy= GenerationType.IDENTITY)
         @Column(name = "user_id")
         private Long id;
 
-        @Column
         private String name;
 
         @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-        @Column
         private String pwd;
 
-        @Column
         private String profile;
 
-        @JsonIgnore
-        @OneToMany(mappedBy="user",fetch=FetchType.EAGER)
-        private Set<Authority> authorities;
+        private List<Role> roles;
+
 }
