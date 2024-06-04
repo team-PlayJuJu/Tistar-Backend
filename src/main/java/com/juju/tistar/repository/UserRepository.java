@@ -2,6 +2,8 @@ package com.juju.tistar.repository;
 
 import com.juju.tistar.entity.User;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;

@@ -1,9 +1,8 @@
 package com.juju.tistar.service;
 
 import com.juju.tistar.config.TokenProvider;
-import com.juju.tistar.entity.Authority;
 import com.juju.tistar.entity.User;
-import com.juju.tistar.repository.AuthorityRepository;
+import com.juju.tistar.entity.enums.Role;
 import com.juju.tistar.repository.UserRepository;
 import com.juju.tistar.request.LoginRequest;
 import com.juju.tistar.response.LoginResponse;
@@ -22,27 +21,20 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final AuthorityRepository authorityRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
 
 
     @Transactional
-    public LoginRequest signupUser(LoginRequest request) {
+    public void signupUser(LoginRequest request) {
         if(!userRepository.existsUserByName(request.getName())) {
-            Authority authority = Authority.builder()
-                    .role("ROLE_USER")
-                    .build();
-            authorityRepository.save(authority);
-
             User user = User.builder()
                     .name(request.getName())
                     .pwd(passwordEncoder.encode(request.getPwd()))
-                    .authorities(Collections.singleton(authority))
+                    .roles(List.of(Role.USER))
                     .build();
             userRepository.save(user);
-            return request;
         } else throw new RuntimeException("중복 사용자 이름");
     }
 
@@ -55,7 +47,7 @@ public class UserService {
         String id = user.getId().toString();
         String password = user.getPwd();
 
-        List<Authority> authorities = new ArrayList<>();
+        List<Role> authorities = user.getRoles();
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(id, password, authorities);
         String access = tokenProvider.generateAccessToken(authentication);

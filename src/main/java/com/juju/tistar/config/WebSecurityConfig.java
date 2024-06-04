@@ -34,9 +34,11 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((requests) -> requests
                 .requestMatchers("/post").hasRole("USER")
-                .requestMatchers("/home").hasAnyRole("USER","ADMIN")
+                .requestMatchers("/home").hasRole("USER")
                 .requestMatchers("/{userId}/myPage").hasRole("USER")
-                .anyRequest().permitAll()
+                .requestMatchers("/signin").permitAll()
+                .requestMatchers("/signup").permitAll()
+                .anyRequest().authenticated()
         )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
