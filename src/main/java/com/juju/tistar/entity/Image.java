@@ -20,6 +20,9 @@ public class Image {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @Column
-    private String imgUrl;
+    @Column(nullable = false)
+    private String fileName;
+
+    @Column(nullable = false)
+    private String storeImagePath;
 }

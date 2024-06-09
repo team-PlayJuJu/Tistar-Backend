@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -27,10 +29,6 @@ public class Post {
     @Column
     private String tag;
 
-    @OneToMany(
-            mappedBy = "post",
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
-            orphanRemoval = true
-    )
-    private List<Image> images = new ArrayList<>();
+    @OneToMany(mappedBy = "post")
+    private Set<Image> Images = new HashSet<>();
 }
