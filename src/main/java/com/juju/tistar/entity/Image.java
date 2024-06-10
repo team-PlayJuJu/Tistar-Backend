@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @NoArgsConstructor
 @Entity
+@Setter
 @Table(name = "Image")
 public class Image {
 
@@ -24,5 +26,5 @@ public class Image {
     private String fileName;
 
     @Column(nullable = false)
-    private String storeImagePath;
+    private String ImagePath;
 }

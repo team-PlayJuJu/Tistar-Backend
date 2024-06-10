@@ -8,9 +8,10 @@ import java.util.Map;
 
 @RestController
 public class PostController {
+
     @PostMapping("/post")
     public String post() {
-        return "imagePost";
+        return "Post";
     }
 
     @GetMapping("/home")
