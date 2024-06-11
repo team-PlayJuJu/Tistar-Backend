@@ -26,5 +26,11 @@ public class Image {
     private String fileName;
 
     @Column(nullable = false)
-    private String ImagePath;
+    private String imagePath;
+    public Image(
+            final String fileName,
+            final String storeImagePath) {
+        this.fileName = fileName;
+        this.imagePath = storeImagePath;
+    }
 }
