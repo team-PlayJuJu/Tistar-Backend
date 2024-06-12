@@ -2,6 +2,7 @@ package com.juju.tistar.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -23,8 +24,9 @@ public class Post {
     @JoinColumn(name = "user_id", updatable = false)
     private User user;
 
-    @Column
-    private Long heart;
+    @BatchSize(size = 300)
+    @OneToMany(mappedBy = "post")
+    private Set<Heart> hearts = new HashSet<>();
 
     @JoinColumn(name = "tag_id")
     @ManyToOne(fetch = LAZY)

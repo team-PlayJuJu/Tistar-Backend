@@ -15,4 +15,6 @@ public class PostQueryRepository {
     private final QUser user = QUser.user;
     private final QTag tag = QTag.tag;
 
+
+
 }
