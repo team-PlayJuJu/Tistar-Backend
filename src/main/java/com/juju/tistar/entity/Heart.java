@@ -11,7 +11,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Entity
 @Getter
 @Setter
-@Table(name = "likes")
+@Table(name = "like")
 @NoArgsConstructor
 public class Heart {
 

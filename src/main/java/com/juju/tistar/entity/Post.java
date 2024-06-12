@@ -13,8 +13,8 @@ import static jakarta.persistence.FetchType.LAZY;
 @Setter
 @Entity
 @NoArgsConstructor
-@Table(name = "Post")
-public class Post {
+@Table(name = "post")
+public class Post extends BaseTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,13 +24,13 @@ public class Post {
     @JoinColumn(name = "user_id", updatable = false)
     private User user;
 
-    @BatchSize(size = 300)
-    @OneToMany(mappedBy = "post")
-    private Set<Heart> hearts = new HashSet<>();
-
     @JoinColumn(name = "tag_id")
     @ManyToOne(fetch = LAZY)
     private Tag tag;
+
+    @BatchSize(size = 300)
+    @OneToMany(mappedBy = "post")
+    private Set<Heart> hearts = new HashSet<>();
 
     @OneToMany(mappedBy = "post")
     private Set<Image> Images = new HashSet<>();
