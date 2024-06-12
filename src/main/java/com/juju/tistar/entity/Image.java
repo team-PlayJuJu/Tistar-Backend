@@ -10,9 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Setter
-@Table(name = "Image")
-public class Image {
-
+@Table(name = "image")
+public class Image extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "file_id")

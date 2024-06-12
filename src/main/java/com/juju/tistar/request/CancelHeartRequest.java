@@ -6,5 +6,4 @@ import jakarta.validation.constraints.NotNull;
 public record CancelHeartRequest(
         @NotNull Long postId
         ) {
-
 }
