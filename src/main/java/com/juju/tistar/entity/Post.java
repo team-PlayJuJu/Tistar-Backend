@@ -3,10 +3,10 @@ package com.juju.tistar.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 @Getter
 @Setter
@@ -26,8 +26,9 @@ public class Post {
     @Column
     private Long heart;
 
-    @Column
-    private String tag;
+    @JoinColumn(name = "tag_id")
+    @ManyToOne(fetch = LAZY)
+    private Tag tag;
 
     @OneToMany(mappedBy = "post")
     private Set<Image> Images = new HashSet<>();
