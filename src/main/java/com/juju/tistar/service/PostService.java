@@ -81,7 +81,6 @@ public class PostService {
 
         final Post post = new Post();
         post.setUser(user);
-        post.setHeart(0L);
         saveTag(post, request.tag());
         postRepository.save(post);
 

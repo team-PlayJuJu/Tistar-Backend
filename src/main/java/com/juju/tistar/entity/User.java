@@ -9,6 +9,7 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -30,8 +31,16 @@ public class User {
         @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
         private String pwd;
 
-        private String profile;
+        @Column
+        private String introduction;
 
         private List<Role> roles;
 
+        @OneToMany(mappedBy = "user")
+        @Builder.Default
+        private Set<Heart> hearts = new HashSet<>();
+
+        @OneToMany(mappedBy = "user")
+        @Builder.Default
+        private Set<Post> posts = new HashSet<>();
 }
