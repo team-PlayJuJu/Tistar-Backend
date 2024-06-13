@@ -75,6 +75,15 @@ public class TokenProvider {
                 .getSubject();
     }
 
+    public Long decodeAccessToken(final String token) {
+
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey.getBytes())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("userId", Long.class);
+    }
 
     public boolean validateToken(String token) {
         if (token == null) {

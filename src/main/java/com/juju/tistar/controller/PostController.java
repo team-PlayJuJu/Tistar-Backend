@@ -36,7 +36,7 @@ public class PostController {
     }
 
     @PostMapping("/{postId}")
-    public ResponseEntity<PostDetailResponse> read (@PathVariable final Long boardId, @Anyone final Long accessId,) {
+    public ResponseEntity<PostDetailResponse> read (@PathVariable final Long boardId, @Anyone final Long accessId) {
         PostDetailResponse data = postService.readPost(boardId, accessId);
         return ResponseEntity.ok(data);
     }
