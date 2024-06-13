@@ -49,10 +49,10 @@ public class PostService {
 
         final String storeImagePath = uploadImage(request.image(), ext, changedImageName);
 
-        final Image Image = PostMapper.uploadImageRequestToEntity(changedImageName, storeImagePath);
+        final Image Image = PostMapper.uploadImageRequest(changedImageName, storeImagePath);
         imageRepository.save(Image);
 
-        return PostMapper.entityToUploadImageResponse(Image);
+        return PostMapper.UploadImageResponse(Image);
     }
 
     private String uploadImage(final MultipartFile image,
@@ -82,13 +82,13 @@ public class PostService {
         final User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저가 없음"));
 
-        final Post post = new Post();
+        final Post post = PostMapper.writePostRequest(request, user);
         post.setUser(user);
         postRepository.save(post);
 
         mappingPostAndImage(request, post);
 
-        return PostMapper.entityToWritePostResponse(post);
+        return PostMapper.WritePostResponse(post);
     }
 
 
@@ -100,21 +100,20 @@ public class PostService {
     }
 
     @Transactional
-    public PostDetailResponse readBoard(final Long boardId, final Long accessId) {
+    public PostDetailResponse readPost(final Long postId, final Long accessId) {
 
-        final Post board = postRepository.findById(boardId)
+        final Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시물을 찾을 수 없음"));
 
-        return postQueryRepository.readPost(boardId, accessId);
+        return postQueryRepository.readPost(postId, accessId);
     }
 
-    public Slice<PostResponse> getBoardList(final String sortBy,
-                                            final Pageable pageable,
-                                            final String keyword) {
+    public Slice<PostResponse> getPostList(final String sortBy,
+                                            final Pageable pageable) {
 
         final SortType sortType = validateSortType(sortBy.toUpperCase());
 
-        return this.postQueryRepository.postList(pageable, sortType, keyword);
+        return this.postQueryRepository.postList(pageable, sortType);
     }
 
     private SortType validateSortType(final String sortBy) {

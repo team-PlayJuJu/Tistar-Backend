@@ -3,6 +3,7 @@ package com.juju.tistar.entity.enums;
 public enum SortType {
     HEARTS("hearts"),
     LATEST("latests"),
+    OLDEST("oldests"),
     DEFAULT("default");
 
     private final String sortType;

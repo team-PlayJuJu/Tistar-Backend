@@ -24,9 +24,8 @@ public class Post extends BaseTimeEntity{
     @JoinColumn(name = "user_id", updatable = false)
     private User user;
 
-    @JoinColumn(name = "tag_id")
-    @ManyToOne(fetch = LAZY)
-    private Tag tag;
+    @Column
+    private String content;
 
     @BatchSize(size = 300)
     @OneToMany(mappedBy = "post")
@@ -34,4 +33,10 @@ public class Post extends BaseTimeEntity{
 
     @OneToMany(mappedBy = "post")
     private Set<Image> Images = new HashSet<>();
+    public Post(
+            final String content,
+            final User user) {
+        this.content = content;
+        setUser(user);
+    }
 }

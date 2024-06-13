@@ -4,11 +4,11 @@ import java.time.LocalDateTime;
 
 public record PostDetailResponse(
         Long id,
+        String content,
         Writer writer,
         LocalDateTime createdAt,
         long heartCount,
-        boolean isHeart,
-        String tag
+        boolean isHeart
 ) {
     public record Writer(
             String name
