@@ -33,9 +33,6 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/post").hasRole("USER")
-                .requestMatchers("/home").hasRole("USER")
-                .requestMatchers("/{userId}/myPage").hasRole("USER")
                 .requestMatchers("/signin").permitAll()
                 .requestMatchers("/signup").permitAll()
                 .anyRequest().authenticated()

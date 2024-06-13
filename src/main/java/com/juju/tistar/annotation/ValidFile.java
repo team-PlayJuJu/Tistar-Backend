@@ -11,7 +11,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = ValidFileValidator.class)
 public @interface ValidFile {
+
     String message() default "PNG, JPG, JPEG 파일만 업로드 가능합니다.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
+
 }

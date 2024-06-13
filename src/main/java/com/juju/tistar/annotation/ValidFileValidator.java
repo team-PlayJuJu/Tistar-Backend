@@ -19,9 +19,11 @@ public class ValidFileValidator implements ConstraintValidator<ValidFile, Multip
     }
 
     private static boolean fileVerification(final String contentType) {
+
         if (!(contentType == null) && ((contentType.equals("image/jpeg")) || (contentType.equals("image/png")) || (contentType.equals("image/jpg")))) {
             return true;
         }
+
         return false;
     }
 }
