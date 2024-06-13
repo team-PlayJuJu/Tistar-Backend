@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class HeartServise {
+public class HeartService {
     private final HeartRepository heartRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
@@ -42,7 +42,7 @@ public class HeartServise {
     }
 
     @Transactional
-    public CancelHeartResponse cancelLike(final Long userId, final Long postId) {
+    public CancelHeartResponse cancelHeart(final Long userId, final Long postId) {
         Heart heart = heartRepository.findByUserIdAndPostId(userId, postId)
                 .orElseThrow(() -> new RuntimeException("하트를 누르지 않음"));
 
@@ -54,18 +54,18 @@ public class HeartServise {
 
     public GetHeartResponse getHeart(final Long userId, final Long postId) {
 
-        final boolean isExistsBoard = postRepository.existsById(postId);
-        if (!isExistsBoard) {
+        final boolean isExistsPost = postRepository.existsById(postId);
+        if (!isExistsPost) {
             throw new RuntimeException("게시물을 찾을 수 없음");
         }
 
-        boolean isHeart = generateIsLike(userId, postId);
+        boolean isHeart = generateIsHeart(userId, postId);
 
         int heartCount = Math.toIntExact(heartQueryRepository.countByPostId(postId));
 
         return new GetHeartResponse(isHeart, heartCount);
     }
-    private boolean generateIsLike(final Long userId, final Long postId) {
+    private boolean generateIsHeart(final Long userId, final Long postId) {
         return heartRepository.existsByUserIdAndPostId(userId, postId);
     }
 }
