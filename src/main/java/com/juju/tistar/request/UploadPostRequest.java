@@ -4,6 +4,6 @@ import com.juju.tistar.annotation.ValidFile;
 import org.springframework.web.multipart.MultipartFile;
 
 public record UploadPostRequest (
-        @ValidFile MultipartFile image
+        @ValidFile MultipartFile[] image
 ) {
 }

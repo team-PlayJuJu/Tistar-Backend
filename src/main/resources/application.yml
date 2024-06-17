@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: Tistar
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      enabled: true
+      max-request-size: 20MB
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show-sql: true
+        format_sql: true
+
+cloud:
+  aws:
+    credentials:
+      secret-key: ${AWS_SECRET_KEY}
+      access-key: ${AWS_ACCESS_KEY}
+    s3:
+      bucket: ${AWS_S3_BUCKET}
+    region:
+      static: ${AWS_REGION}
+      auto: false
+    stack:
+      auto: false
+
+jwt:
+  access: 1800000
+  refresh: 259200000
+  secret: ${JWT_SECRET}

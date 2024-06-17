@@ -35,7 +35,7 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests((requests) -> requests
                 .requestMatchers("/signin").permitAll()
                 .requestMatchers("/signup").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
         )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
