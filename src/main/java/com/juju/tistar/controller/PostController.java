@@ -2,6 +2,7 @@ package com.juju.tistar.controller;
 
 import com.juju.tistar.annotation.Anyone;
 import com.juju.tistar.annotation.UserId;
+import com.juju.tistar.annotation.ValidFile;
 import com.juju.tistar.request.UploadPostRequest;
 import com.juju.tistar.request.WritePostRequest;
 import com.juju.tistar.response.PostDetailResponse;
@@ -11,22 +12,28 @@ import com.juju.tistar.response.WritePostResponse;
 import com.juju.tistar.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Arrays;
+import java.util.List;
 
 @RestController
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/posts")
 public class PostController {
     private final PostService postService;
 
-    @PostMapping("/image")
-    public ResponseEntity<UploadPostResponse> image(@ModelAttribute @Valid UploadPostRequest request) {
-        UploadPostResponse data = postService.saveImage(request);
-        return ResponseEntity.ok(data);
+    @PostMapping("/images")
+    public ResponseEntity<Void> image(@RequestPart(name = "file") MultipartFile[] images) {
+        postService.saveImages(images);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/write")
@@ -36,8 +43,8 @@ public class PostController {
     }
 
     @PostMapping("/{postId}")
-    public ResponseEntity<PostDetailResponse> read (@PathVariable final Long boardId, @Anyone final Long accessId) {
-        PostDetailResponse data = postService.readPost(boardId, accessId);
+    public ResponseEntity<PostDetailResponse> read (@PathVariable final Long postId, @Anyone final Long accessId) {
+        PostDetailResponse data = postService.readPost(postId, accessId);
         return ResponseEntity.ok(data);
     }
 

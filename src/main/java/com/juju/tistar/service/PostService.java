@@ -15,6 +15,7 @@ import com.juju.tistar.response.PostDetailResponse;
 import com.juju.tistar.response.PostResponse;
 import com.juju.tistar.response.UploadPostResponse;
 import com.juju.tistar.response.WritePostResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import com.juju.tistar.request.UploadPostRequest;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PostService {
     private final AmazonS3 amazonS3;
@@ -42,36 +45,38 @@ public class PostService {
     private String bucket;
 
     @Transactional
-    public UploadPostResponse saveImage(final UploadPostRequest request) {
-        final String originName = request.image().getOriginalFilename();
-        final String ext = originName.substring(originName.lastIndexOf("."));
-        final String changedImageName = changeImageName(ext);
+    public void saveImages(MultipartFile[] files) {
 
-        final String storeImagePath = uploadImage(request.image(), ext, changedImageName);
+        for (MultipartFile file : files) {
+            String originName = file.getOriginalFilename();
+            if (originName == null || originName.isEmpty()) {
+                throw new IllegalArgumentException("파일 이름 없음");
+            }
+            String ext = originName.substring(originName.lastIndexOf("."));
+            String changedImageName = changeImageName(ext);
+            String storeImagePath = uploadImage(file, ext, changedImageName);
 
-        final Image Image = PostMapper.uploadImageRequest(changedImageName, storeImagePath);
-        imageRepository.save(Image);
-
-        return PostMapper.UploadImageResponse(Image);
+            Image image = PostMapper.uploadImageRequest(changedImageName, storeImagePath);
+            imageRepository.save(image);
+            PostMapper.UploadImageResponse(image);
+        }
     }
 
-    private String uploadImage(final MultipartFile image,
-                               final String ext,
-                               final String changedImageName) {
+    private String uploadImage(final MultipartFile file, final String ext, final String changedImageName) {
         final ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType("image/" + ext.substring(1));
+        metadata.setContentLength(file.getSize());
         try {
             amazonS3.putObject(new PutObjectRequest(
-                    bucket, changedImageName, image.getInputStream(), metadata)
+                    bucket, changedImageName, file.getInputStream(), metadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
         } catch (final IOException e) {
-            throw new RuntimeException("찾을 수 없음");
+            throw new RuntimeException("파일 업로드 실패", e);
         }
-
         return amazonS3.getUrl(bucket, changedImageName).toString();
     }
-    private String changeImageName(final String ext) {
 
+    private String changeImageName(final String ext) {
         final String uuid = UUID.randomUUID().toString();
         return uuid + ext;
     }
