@@ -20,16 +20,15 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class HeartService {
     private final HeartRepository heartRepository;
-    private final UserRepository userRepository;
+    private final  UserService userService;
     private final PostRepository postRepository;
     private final HeartQueryRepository heartQueryRepository;
 
 
     @Transactional
-    public HeartResponse registerHeart(final Long accessId, final HeartRequest request) {
+    public HeartResponse registerHeart(final HeartRequest request) {
 
-        User user = userRepository.findById(accessId)
-                .orElseThrow(() -> new RuntimeException("유저 못찾음"));
+        User user = userService.getCurrentUser();
 
         Post post = postRepository.findById(request.postId())
                 .orElseThrow(() -> new RuntimeException("게시물 못찾음"));
@@ -42,8 +41,9 @@ public class HeartService {
     }
 
     @Transactional
-    public CancelHeartResponse cancelHeart(final Long userId, final Long postId) {
-        Heart heart = heartRepository.findByUserIdAndPostId(userId, postId)
+    public CancelHeartResponse cancelHeart(final Long postId) {
+        User user = userService.getCurrentUser();
+        Heart heart = heartRepository.findByUserIdAndPostId(user.getId(), postId)
                 .orElseThrow(() -> new RuntimeException("하트를 누르지 않음"));
 
         heart.delete();
@@ -52,14 +52,15 @@ public class HeartService {
         return new CancelHeartResponse(heart.getId());
     }
 
-    public GetHeartResponse getHeart(final Long userId, final Long postId) {
+    public GetHeartResponse getHeart(final Long postId) {
 
         final boolean isExistsPost = postRepository.existsById(postId);
         if (!isExistsPost) {
             throw new RuntimeException("게시물을 찾을 수 없음");
         }
 
-        boolean isHeart = generateIsHeart(userId, postId);
+        User user = userService.getCurrentUser();
+        boolean isHeart = generateIsHeart(user.getId(),postId);
 
         int heartCount = Math.toIntExact(heartQueryRepository.countByPostId(postId));
 

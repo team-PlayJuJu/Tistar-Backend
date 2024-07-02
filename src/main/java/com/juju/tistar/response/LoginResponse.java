@@ -6,6 +6,4 @@ import lombok.Getter;
 @AllArgsConstructor
 public class LoginResponse {
     private String access;
-
-    private String refresh;
 }

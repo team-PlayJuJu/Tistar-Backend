@@ -35,5 +35,4 @@ cloud:
 
 jwt:
   access: 1800000
-  refresh: 259200000
   secret: ${JWT_SECRET}

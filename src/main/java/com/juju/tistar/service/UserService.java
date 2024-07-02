@@ -8,17 +8,18 @@ import com.juju.tistar.request.LoginRequest;
 import com.juju.tistar.response.LoginResponse;
 import com.mysql.cj.exceptions.PasswordExpiredException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.security.PublicKey;
 import java.util.List;
-import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -32,8 +33,8 @@ public class UserService {
         if(!userRepository.existsUserByName(request.getName())) {
             User user = User.builder()
                     .name(request.getName())
-                    .pwd(passwordEncoder.encode(request.getPwd()))
-                    .roles(List.of(Role.USER))
+                    .password(passwordEncoder.encode(request.getPwd()))
+                    .role(Role.ROLE_USER.getAuthority())
                     .build();
             userRepository.save(user);
         } else throw new RuntimeException("중복 사용자 이름");
@@ -42,17 +43,21 @@ public class UserService {
     @Transactional
     public LoginResponse signinUser(LoginRequest request) {
         User user = userRepository.findByName(request.getName()).orElseThrow(() -> new RuntimeException("노 유저"));
-        if (!passwordEncoder.matches(request.getPwd(), user.getPwd()))
+        if (!passwordEncoder.matches(request.getPwd(), user.getPassword()))
             throw new PasswordExpiredException();
-
         String id = user.getId().toString();
-        String password = user.getPwd();
-
-        List<Role> authorities = user.getRoles();
-
-        Authentication authentication = new UsernamePasswordAuthenticationToken(id, password, authorities);
+        String password = user.getPassword();
+        Role role = Role.valueOf(user.getRole());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(id, password, List.of(role));
         String access = tokenProvider.generateAccessToken(authentication);
-        String refresh = tokenProvider.generateRefreshToken(authentication);
-        return new LoginResponse(access, refresh);
+        return new LoginResponse(access);
+    }
+
+    @Transactional
+    public User getCurrentUser() {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        log.info(userId);
+        return userRepository.findById(Long.parseLong(userId))
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }

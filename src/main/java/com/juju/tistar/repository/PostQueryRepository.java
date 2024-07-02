@@ -28,16 +28,17 @@ public class PostQueryRepository {
     private final QUser user = QUser.user;
     private final QHeart heart = QHeart.heart;
     private final QImage image = QImage.image;
+    private final QReview review = QReview.review;
 
 
     public Slice<PostResponse> postList(final Pageable pageable,
-                                              final SortType sortType) {
+                                        final SortType sortType) {
 
         final ConstructorExpression<PostResponse> postResponse =
                 Projections.constructor(
                         PostResponse.class,
                         post.id,
-                        image.imagePath,
+                        image.imagePath.min(),
                         image.createdAt,
                         heart.count()
                 );
@@ -58,29 +59,63 @@ public class PostQueryRepository {
         return new SliceImpl<>(result, pageable, hasNext);
     }
 
-    public PostDetailResponse readPost(final Long postId, final Long accessId) {
+    public PostDetailResponse readPost(final Long postId, final Long userId) {
+        final ConstructorExpression<PostDetailResponse.Writer> writer = Projections.constructor(
+                PostDetailResponse.Writer.class,
+                user.name
+        );
 
-        final ConstructorExpression<PostDetailResponse.Writer> writer =
-                Projections.constructor(
-                        PostDetailResponse.Writer.class,
-                        user.name
-                );
-
-        final ConstructorExpression<PostDetailResponse> readPostResponse =
-                Projections.constructor(
+        PostDetailResponse basicPostDetails = jpaQueryFactory
+                .select(Projections.constructor(
                         PostDetailResponse.class,
-                        user.id,
+                        post.id,
                         post.content,
                         writer,
                         post.createdAt,
                         heart.count(),
-                        isHeart(postId, accessId)
-                );
+                        isHeart(postId, userId),
+                        Projections.list(),
+                        Projections.list()
+                ))
+                .from(post)
+                .join(user).on(post.user.eq(user))
+                .leftJoin(heart).on(heart.post.eq(post))
+                .where(post.id.eq(postId))
+                .fetchFirst();
 
-        return
-                getJpaQuery(readPostResponse)
-                        .where(post.id.eq(postId))
-                        .fetchFirst();
+        List<PostDetailResponse.Image> images = jpaQueryFactory
+                .select(Projections.constructor(
+                        PostDetailResponse.Image.class,
+                        image.id,
+                        image.fileName,
+                        image.imagePath
+                ))
+                .from(image)
+                .where(image.post.id.eq(postId))
+                .fetch();
+
+        List<PostDetailResponse.Review> reviews = jpaQueryFactory
+                .select(Projections.constructor(
+                        PostDetailResponse.Review.class,
+                        review.id,
+                        review.content,
+                        review.user.id,
+                        review.user.name
+                ))
+                .from(review)
+                .where(review.post.id.eq(postId))
+                .fetch();
+
+        return new PostDetailResponse(
+                basicPostDetails.id(),
+                basicPostDetails.content(),
+                basicPostDetails.writer(),
+                basicPostDetails.createdAt(),
+                basicPostDetails.heartCount(),
+                basicPostDetails.isHeart(),
+                images,
+                reviews
+        );
     }
 
     private BooleanExpression isHeart(final Long postId, final Long accessId) {
@@ -98,7 +133,7 @@ public class PostQueryRepository {
                 .join(user).on(post.user.eq(user))
                 .leftJoin(heart).on(heart.post.eq(post));
     }
-    private OrderSpecifier ordering(final SortType sortType) {
+    private OrderSpecifier<?> ordering(final SortType sortType) {
 
         return switch (sortType) {
 

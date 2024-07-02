@@ -19,28 +19,18 @@ public class TokenProvider {
     private final UserDetailsService userDetailsService;
     private final String secretKey;
     private final Long access;
-    private final Long refresh;
 
     public TokenProvider(UserDetailsService userDetailsService, @Value("${jwt.secret}") String secretKey,
-                         @Value("${jwt.access}") Long access,
-                         @Value("${jwt.refresh}") Long refresh){
+                         @Value("${jwt.access}") Long access){
         this.userDetailsService = userDetailsService;
         this.secretKey = secretKey;
         this.access = access;
-        this.refresh = refresh;
     }
 
     public String generateAccessToken(Authentication authentication) {
         return generateToken(
                 authentication.getPrincipal().toString(),
                 access
-        );
-    }
-
-    public String generateRefreshToken(Authentication authentication) {
-        return generateToken(
-                authentication.getPrincipal().toString(),
-                refresh
         );
     }
 
@@ -74,17 +64,6 @@ public class TokenProvider {
                 .getBody()
                 .getSubject();
     }
-
-    public Long decodeAccessToken(final String token) {
-
-        return Jwts.parserBuilder()
-                .setSigningKey(secretKey.getBytes())
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .get("userId", Long.class);
-    }
-
     public boolean validateToken(String token) {
         if (token == null) {
             return false;
