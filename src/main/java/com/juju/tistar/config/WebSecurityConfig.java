@@ -18,6 +18,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -33,9 +36,11 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/signin").permitAll()
-                .requestMatchers("/signup").permitAll()
-                .anyRequest().permitAll()
+                .requestMatchers("/auth/signin").permitAll()
+                .requestMatchers("/auth/signup").permitAll()
+                .requestMatchers("/post/write").permitAll()
+                .requestMatchers("/user/dd").permitAll()
+                .anyRequest().authenticated()
         )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {

@@ -1,7 +1,7 @@
 package com.juju.tistar.service;
 
 import com.juju.tistar.entity.User;
-import com.juju.tistar.entity.enums.Role;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -10,17 +10,17 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Getter
+@Slf4j
 public class AuthDetails implements UserDetails {
     private final User user;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<Role> role = user.getRoles();
+        String role = user.getRole();
 
-        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(role.get(0).getRole());
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(role);
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(simpleGrantedAuthority);
 

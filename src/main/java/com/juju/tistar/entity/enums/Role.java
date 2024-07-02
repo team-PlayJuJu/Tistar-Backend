@@ -1,16 +1,15 @@
 package com.juju.tistar.entity.enums;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 
+@NoArgsConstructor
 @AllArgsConstructor
-@Getter
 public enum Role implements GrantedAuthority {
+    ROLE_USER("ROLE_USER"),
+    ROLE_ADMIN("ROLE_ADMIN");
 
-    USER("ROLE_USER"),
-    ADMIN("ROLE_ADMIN");
-
-    private final String role;
+    private String role;
 
     @Override
     public String getAuthority() {

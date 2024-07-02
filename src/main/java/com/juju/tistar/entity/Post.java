@@ -20,7 +20,7 @@ public class Post extends BaseTimeEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.MERGE, targetEntity = User.class)
+    @ManyToOne
     @JoinColumn(name = "user_id", updatable = false)
     private User user;
 
@@ -33,6 +33,9 @@ public class Post extends BaseTimeEntity{
 
     @OneToMany(mappedBy = "post")
     private Set<Image> Images = new HashSet<>();
+
+    @OneToMany(mappedBy = "post")
+    private Set<Review> reviews = new HashSet<>();
     public Post(
             final String content,
             final User user) {

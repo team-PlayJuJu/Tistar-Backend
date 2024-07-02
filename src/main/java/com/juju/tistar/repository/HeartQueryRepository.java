@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 public class HeartQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
     private final QHeart heart = QHeart.heart;
-    private QPost post = QPost.post;
+    private final QPost post = QPost.post;
 
     public Long countByPostId(final Long postId) {
 
