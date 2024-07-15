@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    @PostMapping("/dd")
+    @GetMapping("/dd")
     public ResponseEntity<User> dd() {
         User userId = userService.getCurrentUser();
         return ResponseEntity.ok(userId);

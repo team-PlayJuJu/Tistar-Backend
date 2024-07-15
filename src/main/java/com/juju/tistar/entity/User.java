@@ -1,4 +1,5 @@
 package com.juju.tistar.entity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
@@ -29,13 +30,16 @@ public class User {
 
         @OneToMany(mappedBy = "user")
         @Builder.Default
+        @JsonBackReference
         private Set<Heart> hearts = new HashSet<>();
 
         @OneToMany(mappedBy = "user")
         @Builder.Default
+        @JsonBackReference
         private Set<Post> posts = new HashSet<>();
 
         @OneToMany(mappedBy = "user")
         @Builder.Default
+        @JsonBackReference
         private Set<Review> reviews = new HashSet<>();
 }

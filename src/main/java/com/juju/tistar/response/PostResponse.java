@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public record PostResponse(
         Long postId,
         String imageUrl,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        Long heartCount
 ) {
 }

@@ -5,9 +5,11 @@ import com.juju.tistar.entity.enums.SortType;
 import com.juju.tistar.response.PostDetailResponse;
 import com.juju.tistar.response.PostResponse;
 import com.querydsl.core.types.ConstructorExpression;
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Random;
 
 @Repository
 @RequiredArgsConstructor
@@ -35,11 +38,11 @@ public class PostQueryRepository {
                                         final SortType sortType) {
 
         final ConstructorExpression<PostResponse> postResponse =
-                Projections.constructor(
+                    Projections.constructor(
                         PostResponse.class,
                         post.id,
                         image.imagePath.min(),
-                        image.createdAt,
+                        post.createdAt,
                         heart.count()
                 );
 
@@ -74,8 +77,8 @@ public class PostQueryRepository {
                         post.createdAt,
                         heart.count(),
                         isHeart(postId, userId),
-                        Projections.list(),
-                        Projections.list()
+                        Projections.list(new Expression<?>[0]),
+                        Projections.list(new Expression<?>[0])
                 ))
                 .from(post)
                 .join(user).on(post.user.eq(user))
@@ -131,16 +134,15 @@ public class PostQueryRepository {
                 .select(constructorExpression)
                 .from(post)
                 .join(user).on(post.user.eq(user))
-                .leftJoin(heart).on(heart.post.eq(post));
+                .leftJoin(heart).on(heart.post.eq(post))
+                .leftJoin(post.Images, image);
     }
-    private OrderSpecifier<?> ordering(final SortType sortType) {
-
+    private OrderSpecifier ordering(final SortType sortType) {
         return switch (sortType) {
-
             case LATEST -> post.createdAt.desc();
             case HEARTS -> heart.count().desc();
             case OLDEST -> post.createdAt.asc();
-            default -> NumberExpression.random().asc();
+            default -> post.id.asc();
         };
     }
 }

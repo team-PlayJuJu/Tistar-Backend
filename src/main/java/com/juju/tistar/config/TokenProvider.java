@@ -1,85 +1,95 @@
 package com.juju.tistar.config;
 
-import io.jsonwebtoken.Jwts;
+import com.juju.tistar.entity.enums.TokenType;
+import com.juju.tistar.exception.HttpException;
+import com.juju.tistar.response.LoginResponse;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
-
+import javax.crypto.SecretKey;
 import java.util.*;
 
-import static org.springframework.security.core.authority.AuthorityUtils.createAuthorityList;
-
 @Component
+@RequiredArgsConstructor
 public class TokenProvider {
-
     private final UserDetailsService userDetailsService;
-    private final String secretKey;
-    private final Long access;
 
-    public TokenProvider(UserDetailsService userDetailsService, @Value("${jwt.secret}") String secretKey,
-                         @Value("${jwt.access}") Long access){
-        this.userDetailsService = userDetailsService;
-        this.secretKey = secretKey;
-        this.access = access;
-    }
+    @Value("${jwt.secret}")
+    private String secretKey;
+    @Value("${jwt.access}")
+    private Long access;
+    @Value("${jwt.refresh}")
+    private Long refresh;
 
-    public String generateAccessToken(Authentication authentication) {
-        return generateToken(
-                authentication.getPrincipal().toString(),
-                access
+    public LoginResponse generateTokenSet(Long id){
+        return new LoginResponse(
+                generateToken(id, TokenType.ACCESS),
+                generateToken(id, TokenType.REFRESH)
         );
     }
 
-    public Authentication getAuthentication(String accessToken) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(getUsername(accessToken));
-        return new UsernamePasswordAuthenticationToken(getUsername(accessToken), "", userDetails.getAuthorities());
-    }
+    public String generateToken(Long id, TokenType tokenType) {
+        Long expired = tokenType == TokenType.ACCESS ? access : refresh;
 
-    public String generateToken(String username, Long expired) {
-        Long now = new Date().getTime();
+        byte[] keyBytes = Base64.getEncoder().encode(secretKey.getBytes());
+        SecretKey signingKey = Keys.hmacShaKeyFor(keyBytes);
 
         return Jwts.builder()
-                .setSubject(username)
-                .setExpiration(new Date(now + expired))
-                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
+                .signWith(signingKey)
+                .subject(String.valueOf(id))
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + expired))
                 .compact();
     }
 
-    public String resolveToken(String token) {
-        if(token != null && token.startsWith("Bearer ")){
-            return token.substring(7);
-        } else return null;
+    public UsernamePasswordAuthenticationToken getAuthentication(String token) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(getTokenSubject(token));
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
-
-    private String getUsername(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(secretKey.getBytes())
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+    private String getTokenSubject(String subject) {
+        return getClaims(subject).getSubject();
     }
-    public boolean validateToken(String token) {
-        if (token == null) {
-            return false;
-        }
+
+    public Claims getClaims(String token) {
+        byte[] keyBytes = Base64.getEncoder().encode(secretKey.getBytes());
+        SecretKey signingKey = Keys.hmacShaKeyFor(keyBytes);
 
         try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(secretKey.getBytes())
+            return Jwts.parser()
+                    .verifyWith(signingKey)
                     .build()
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .getExpiration()
-                    .after(new Date());
+                    .parseSignedClaims(token)
+                    .getPayload();
+        } catch (ExpiredJwtException e) {
+            throw new HttpException(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다.");
+        } catch (UnsupportedJwtException e) {
+            throw new HttpException(HttpStatus.FORBIDDEN, "형식이 일치하지 않는 토큰입니다.");
+        } catch (MalformedJwtException e) {
+            throw new HttpException(HttpStatus.FORBIDDEN, "올바르지 않은 구성의 토큰입니다.");
+        } catch (SignatureException e) {
+            throw new HttpException(HttpStatus.FORBIDDEN, "서명을 확인할 수 없는 토큰입니다.");
+        } catch (RuntimeException e) {
+            throw new HttpException(HttpStatus.FORBIDDEN, "알 수 없는 토큰입니다.");
         }
-        catch (Exception e) {
-            return false;
-        }
+    }
+
+    public Boolean validateToken(String token){
+        byte[] keyBytes = Base64.getEncoder().encode(secretKey.getBytes());
+        SecretKey signingKey = Keys.hmacShaKeyFor(keyBytes);
+
+        return Jwts.parser()
+                .verifyWith(signingKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getExpiration()
+                .before(new Date());
     }
 }

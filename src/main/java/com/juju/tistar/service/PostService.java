@@ -2,6 +2,7 @@ package com.juju.tistar.service;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.juju.tistar.entity.Heart;
 import com.juju.tistar.entity.Image;
 import com.juju.tistar.entity.Post;
 import com.juju.tistar.entity.User;
