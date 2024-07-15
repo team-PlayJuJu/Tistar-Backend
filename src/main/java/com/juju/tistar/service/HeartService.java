@@ -7,7 +7,6 @@ import com.juju.tistar.mapper.HeartMapper;
 import com.juju.tistar.repository.HeartQueryRepository;
 import com.juju.tistar.repository.HeartRepository;
 import com.juju.tistar.repository.PostRepository;
-import com.juju.tistar.repository.UserRepository;
 import com.juju.tistar.request.HeartRequest;
 import com.juju.tistar.response.CancelHeartResponse;
 import com.juju.tistar.response.GetHeartResponse;
@@ -26,11 +25,11 @@ public class HeartService {
 
 
     @Transactional
-    public HeartResponse registerHeart(final HeartRequest request) {
+    public HeartResponse registerHeart(final Long postId) {
 
         User user = userService.getCurrentUser();
 
-        Post post = postRepository.findById(request.postId())
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시물 못찾음"));
 
         Heart heart = HeartMapper.HeartRequest(user, post);

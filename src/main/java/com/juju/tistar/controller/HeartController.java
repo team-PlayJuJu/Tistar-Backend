@@ -16,42 +16,20 @@ import org.springframework.web.bind.annotation.*;
 public class HeartController {
     private final HeartService heartService;
     @PostMapping
-    public ResponseEntity<HeartResponse> registerLike(@RequestAttribute("isAuthenticated") final boolean isAuthenticated,
-                                                      @RequestBody @Valid final HeartRequest request) {
-        HeartResponse data;
-
-        if (isAuthenticated) {
-            data = heartService.registerHeart(request);
-        } else {
-            throw new RuntimeException("권한이 없습니다");
-        }
+    public ResponseEntity<HeartResponse> registerLike(@RequestParam("postId") final Long postId) {
+        HeartResponse data = heartService.registerHeart(postId);
         return ResponseEntity.ok(data);
     }
 
     @DeleteMapping
-    public ResponseEntity<CancelHeartResponse> cancelLike(@RequestAttribute("isAuthenticated") final boolean isAuthenticated,
-                                                          @RequestParam("postId") @Valid final Long postId) {
-        CancelHeartResponse data;
-
-        if (isAuthenticated) {
-            data = heartService.cancelHeart(postId);
-        } else {
-            throw new RuntimeException("권한이 없습니다");
-        }
+    public ResponseEntity<CancelHeartResponse> cancelLike(@RequestParam("postId") final Long postId) {
+        CancelHeartResponse data = heartService.cancelHeart(postId);
         return ResponseEntity.ok(data);
     }
 
     @GetMapping
-    public ResponseEntity<GetHeartResponse> getLikeStatus(@RequestAttribute("isAuthenticated") final boolean isAuthenticated,
-                                                          @RequestParam("postId") final Long postId) {
-
-        GetHeartResponse data;
-
-        if (isAuthenticated) {
-            data = heartService.getHeart(postId);
-        } else {
-            throw new RuntimeException("권한이 없습니다");
-        }
+    public ResponseEntity<GetHeartResponse> getLikeStatus(@RequestParam("postId") final Long postId) {
+        GetHeartResponse data = heartService.getHeart(postId);
         return ResponseEntity.ok(data);
     }
 }

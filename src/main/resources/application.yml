@@ -1,20 +1,23 @@
 spring:
   application:
     name: Tistar
+
   servlet:
     multipart:
       max-file-size: 20MB
       enabled: true
       max-request-size: 20MB
+
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    password: ${DB_PASSWORD}  
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         show-sql: true
@@ -35,4 +38,5 @@ cloud:
 
 jwt:
   access: 1800000
+  refresh: 259200000
   secret: ${JWT_SECRET}
