@@ -17,4 +17,8 @@ public class ReviewController {
             @RequestBody String content) {
         reviewService.createReview(postId, content);
     }
+    @DeleteMapping("/{reviewId}")
+    public void deletePost(@PathVariable final Long reviewId){
+        reviewService.deleteReview(reviewId);
+    }
 }
