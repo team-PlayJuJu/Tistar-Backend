@@ -1,9 +1,12 @@
 package com.juju.tistar.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.juju.tistar.entity.enums.Role;
+import com.juju.tistar.util.StringListConverter;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Table(name = "user")
@@ -26,7 +29,8 @@ public class User {
 
         private String introduction;
 
-        private String role;
+        @Convert(converter = StringListConverter.class)
+        private List<Role> roles;
 
         @OneToMany(mappedBy = "user")
         @Builder.Default

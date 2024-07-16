@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ReviewController {
     private final ReviewService reviewService;
-    @PostMapping("review")
+    @PostMapping
     public void createReview(
             @RequestParam Long postId,
-            @RequestPart String content) {
+            @RequestBody String content) {
         reviewService.createReview(postId, content);
     }
 }

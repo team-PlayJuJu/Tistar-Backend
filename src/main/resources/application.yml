@@ -15,13 +15,14 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
-    show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
-        show-sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
+        use_sql_comments: true
+        show_sql: true
 
 cloud:
   aws:
