@@ -7,6 +7,7 @@ import com.juju.tistar.entity.Image;
 import com.juju.tistar.entity.Post;
 import com.juju.tistar.entity.User;
 import com.juju.tistar.entity.enums.SortType;
+import com.juju.tistar.exception.HttpException;
 import com.juju.tistar.repository.ImageRepository;
 import com.juju.tistar.repository.PostQueryRepository;
 import com.juju.tistar.repository.PostRepository;
@@ -16,6 +17,7 @@ import com.juju.tistar.response.WritePostResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -110,5 +112,14 @@ public class PostService {
             }
         }
         throw new RuntimeException("없어");
+    }
+    public void deletePost(final Long postId) {
+        User user = userService.getCurrentUser();
+        final Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("게시물을 찾을 수 없음"));
+
+        if(!user.getName().equals(post.getUser().getName()))
+            throw new HttpException(HttpStatus.BAD_REQUEST, "게시글 작성자가 아닙니다.");
+        postRepository.delete(post);
     }
 }

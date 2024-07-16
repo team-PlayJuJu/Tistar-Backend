@@ -1,11 +1,9 @@
 package com.juju.tistar.controller;
 
-import com.juju.tistar.request.HeartRequest;
 import com.juju.tistar.response.CancelHeartResponse;
 import com.juju.tistar.response.GetHeartResponse;
 import com.juju.tistar.response.HeartResponse;
 import com.juju.tistar.service.HeartService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -42,4 +42,8 @@ public class PostController {
         final Slice<PostResponse> data = postService.getPostList(sortBy, pageable);
         return ResponseEntity.ok(data);
     }
+    @DeleteMapping("/{postId}")
+    public void deletePost(@PathVariable final Long postId){
+        postService.deletePost(postId);
+    }
 }
