@@ -28,13 +28,13 @@ public class PostController {
         WritePostResponse response = postService.writePost(content, files);
         return ResponseEntity.ok(response);
     }
-    @PostMapping("/{postId}")
+    @GetMapping("/{postId}")
     public ResponseEntity<PostDetailResponse> read (@PathVariable final Long postId) {
         PostDetailResponse data = postService.readPost(postId);
         return ResponseEntity.ok(data);
     }
 
-    @GetMapping
+    @GetMapping 
     public ResponseEntity<Slice<PostResponse>> boardList(
             @RequestParam(name = "sortBy", defaultValue = "default") final String sortBy,
             @PageableDefault(size = 6) final Pageable pageable) {

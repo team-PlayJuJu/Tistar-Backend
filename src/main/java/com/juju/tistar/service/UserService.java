@@ -19,6 +19,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -30,14 +32,14 @@ public class UserService {
 
     @Transactional
     public void signupUser(SignupRequest request) {
-        if(!userRepository.existsUserByName(request.getName())) {
-            User user = User.builder()
-                    .name(request.getName())
-                    .password(passwordEncoder.encode(request.getPwd()))
-                    .role(Role.ROLE_USER.getAuthority())
-                    .build();
-            userRepository.save(user);
-        } else throw new RuntimeException("중복 사용자 이름");
+        if(userRepository.existsUserByName(request.getName()))
+            throw new HttpException(HttpStatus.BAD_REQUEST, "이미 해당 이름을 사용하는 멤버가 존재합니다.");
+        User user = User.builder()
+                .name(request.getName())
+                .password(passwordEncoder.encode(request.getPwd()))
+                .roles(List.of(Role.ROLE_USER))
+                .build();
+        userRepository.save(user);
     }
 
     @Transactional
@@ -50,10 +52,8 @@ public class UserService {
 
     @Transactional
     public User getCurrentUser() {
-        String userId = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        log.info(userId);
-        return userRepository.findById(Long.parseLong(userId))
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        return userRepository.findByName(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND, "해당 유저를 찾을 수 없습니다."));
     }
     public RefreshTokenResponse refreshToken(String access, String refresh){
         access = access.substring(7);

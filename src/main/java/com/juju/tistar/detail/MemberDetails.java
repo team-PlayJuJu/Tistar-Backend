@@ -1,42 +1,31 @@
-package com.juju.tistar.service;
+package com.juju.tistar.detail;
 
 import com.juju.tistar.entity.User;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
-import java.util.ArrayList;
+import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
-
-@RequiredArgsConstructor
-@Getter
-@Slf4j
-public class AuthDetails implements UserDetails {
-    private final User user;
+@AllArgsConstructor
+public class MemberDetails implements UserDetails {
+    private User user;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        String role = user.getRole();
-
-        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(role);
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(simpleGrantedAuthority);
-
-        return authorities;
+        return user.getRoles().stream().map(role ->
+                new SimpleGrantedAuthority(role.getPermission())
+        ).toList();
     }
 
     @Override
+    @Deprecated
     public String getPassword() {
         return null;
     }
 
     @Override
     public String getUsername() {
-        return null;
+        return user.getName();
     }
-
     @Override
     public boolean isAccountNonExpired() {
         return false;
@@ -56,4 +45,5 @@ public class AuthDetails implements UserDetails {
     public boolean isEnabled() {
         return false;
     }
+
 }
