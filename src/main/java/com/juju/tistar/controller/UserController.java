@@ -22,10 +22,15 @@ public class UserController {
     }
 
     @GetMapping("/mypage")
-    public ResponseEntity<UserPageResponse> myPage(Pageable pageable) {
+    public ResponseEntity<UserPageResponse> myPagePost(Pageable pageable) {
         User user = userService.getCurrentUser();
-        String name = user.getName();
-        UserPageResponse data = userService.getUserPage(name, pageable);
+        UserPageResponse data = userService.getUserPage(user.getName(), pageable);
+        return ResponseEntity.ok(data);
+    }
+    @GetMapping("/myhearts")
+    public ResponseEntity<UserPageResponse> myPageLike(Pageable pageable) {
+        User user = userService.getCurrentUser();
+        UserPageResponse data = userService.getUserHearts(user.getName(), pageable);
         return ResponseEntity.ok(data);
     }
 }

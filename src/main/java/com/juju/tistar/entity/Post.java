@@ -32,7 +32,7 @@ public class Post extends BaseTimeEntity{
     @OneToMany(mappedBy = "post")
     private Set<Heart> hearts = new HashSet<>();
 
-    @OneToMany(mappedBy = "post",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "post",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images;
 
     @OneToMany(mappedBy = "post")
