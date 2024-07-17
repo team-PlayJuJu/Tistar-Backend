@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.BatchSize;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static jakarta.persistence.FetchType.LAZY;
@@ -32,7 +33,7 @@ public class Post extends BaseTimeEntity{
     private Set<Heart> hearts = new HashSet<>();
 
     @OneToMany(mappedBy = "post",cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Set<Image> Images = new HashSet<>();
+    private List<Image> images;
 
     @OneToMany(mappedBy = "post")
     private Set<Review> reviews = new HashSet<>();
