@@ -3,8 +3,12 @@ package com.juju.tistar.mapper;
 import com.juju.tistar.entity.Image;
 import com.juju.tistar.entity.Post;
 import com.juju.tistar.entity.User;
+import com.juju.tistar.response.MyHeartPostsResponse;
 import com.juju.tistar.response.UploadPostResponse;
 import com.juju.tistar.response.WritePostResponse;
+import org.springframework.data.domain.Slice;
+
+import static com.juju.tistar.entity.QPost.post;
 
 public class PostMapper {
 

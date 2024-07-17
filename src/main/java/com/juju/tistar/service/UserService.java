@@ -6,13 +6,11 @@ import com.juju.tistar.entity.User;
 import com.juju.tistar.entity.enums.Role;
 import com.juju.tistar.entity.enums.TokenType;
 import com.juju.tistar.exception.HttpException;
+import com.juju.tistar.mapper.PostMapper;
 import com.juju.tistar.repository.UserRepository;
 import com.juju.tistar.request.LoginRequest;
 import com.juju.tistar.request.SignupRequest;
-import com.juju.tistar.response.LoginResponse;
-import com.juju.tistar.response.UserPageResponse;
-import com.juju.tistar.response.UserPostsResponse;
-import com.juju.tistar.response.RefreshTokenResponse;
+import com.juju.tistar.response.*;
 import com.mysql.cj.exceptions.PasswordExpiredException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -90,7 +88,6 @@ public class UserService {
     }
 
     public UserPageResponse getUserPage(final String name, final Pageable pageable) {
-        System.out.println(name);
         final User user = userRepository.findByName(name)
                 .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
         String introduction = user.getIntroduction();
@@ -108,6 +105,22 @@ public class UserService {
                 .collect(Collectors.toList());
         return new UserPageResponse(name, introduction, postsResponses);
     }
-
-
+    public UserPageResponse getUserHearts(final String name, final Pageable pageable) {
+        final User user = userRepository.findByName(name)
+                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+        String introduction = user.getIntroduction();
+        Long userId = user.getId();
+        final Slice<Post> myHearts = userRepository.findAllMyLikePosts(userId, pageable);
+        List<MyHeartPostsResponse> HeartsResponse = myHearts.stream()
+                .map(post -> {
+                    String imageUrl = post.getImages().get(0).getImagePath();
+                    return new MyHeartPostsResponse(
+                            post.getId(),
+                            imageUrl,
+                            post.getCreatedAt()
+                    );
+                })
+                .collect(Collectors.toList());
+        return new UserPageResponse(name, introduction, HeartsResponse);
+    }
 }

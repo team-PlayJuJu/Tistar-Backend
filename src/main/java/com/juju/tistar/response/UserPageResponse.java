@@ -12,5 +12,5 @@ import java.util.List;
 public class UserPageResponse {
     private String name;
     private String introduction;
-    private List<UserPostsResponse> postsResponses;
+    private List<?> postsResponses;
 }

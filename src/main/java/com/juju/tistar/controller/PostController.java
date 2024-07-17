@@ -29,7 +29,7 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
     @GetMapping("/{postId}")
-    public ResponseEntity<PostDetailResponse> read (@PathVariable final Long postId) {
+    public ResponseEntity<PostDetailResponse> read(@PathVariable final Long postId) {
         PostDetailResponse data = postService.readPost(postId);
         return ResponseEntity.ok(data);
     }
