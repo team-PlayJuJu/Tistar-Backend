@@ -135,7 +135,7 @@ public class PostQueryRepository {
                 .from(post)
                 .join(user).on(post.user.eq(user))
                 .leftJoin(heart).on(heart.post.eq(post))
-                .leftJoin(post.Images, image);
+                .leftJoin(post.images, image);
     }
     private OrderSpecifier ordering(final SortType sortType) {
         return switch (sortType) {

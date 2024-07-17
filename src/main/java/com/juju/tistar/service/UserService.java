@@ -1,6 +1,7 @@
 package com.juju.tistar.service;
 
 import com.juju.tistar.config.TokenProvider;
+import com.juju.tistar.entity.Post;
 import com.juju.tistar.entity.User;
 import com.juju.tistar.entity.enums.Role;
 import com.juju.tistar.entity.enums.TokenType;
@@ -9,10 +10,14 @@ import com.juju.tistar.repository.UserRepository;
 import com.juju.tistar.request.LoginRequest;
 import com.juju.tistar.request.SignupRequest;
 import com.juju.tistar.response.LoginResponse;
+import com.juju.tistar.response.UserPageResponse;
+import com.juju.tistar.response.UserPostsResponse;
 import com.juju.tistar.response.RefreshTokenResponse;
 import com.mysql.cj.exceptions.PasswordExpiredException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -82,4 +88,26 @@ public class UserService {
             throw new HttpException(HttpStatus.BAD_REQUEST, "만료된 토큰이 없습니다");
         }
     }
+
+    public UserPageResponse getUserPage(final String name, final Pageable pageable) {
+        System.out.println(name);
+        final User user = userRepository.findByName(name)
+                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+        String introduction = user.getIntroduction();
+        Long userId = user.getId();
+        final Slice<Post> myPosts = userRepository.findAllMyPosts(userId, pageable);
+        List<UserPostsResponse> postsResponses = myPosts.stream()
+                .map(post -> {
+                    String imageUrl = post.getImages().get(0).getImagePath();
+                    return new UserPostsResponse(
+                            post.getId(),
+                            imageUrl,
+                            post.getCreatedAt()
+                    );
+                })
+                .collect(Collectors.toList());
+        return new UserPageResponse(name, introduction, postsResponses);
+    }
+
+
 }
