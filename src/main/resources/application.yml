@@ -24,6 +24,9 @@ spring:
         use_sql_comments: true
         show_sql: true
 
+chatgpt:
+  api-key: ${CHATGPT_SECRET_KEY}
+
 cloud:
   aws:
     credentials:
@@ -41,3 +44,4 @@ jwt:
   access: 1800000
   refresh: 259200000
   secret: ${JWT_SECRET}
+
