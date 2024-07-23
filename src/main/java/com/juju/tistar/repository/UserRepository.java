@@ -22,7 +22,6 @@ public interface UserRepository extends CrudRepository<User, Long> {
             "ORDER BY post.createdAt DESC")
     Slice<Post> findAllMyPosts(@Param("userId") final Long userId, final Pageable pageable);
 
-    // 내가 좋아요 한 게시글 목록 조회 - 기본값(최신순)
     @Query("SELECT post FROM Post post" +
             " JOIN post.hearts hearts" +
             " JOIN FETCH post.user user" +

@@ -7,7 +7,6 @@ import com.juju.tistar.mapper.HeartMapper;
 import com.juju.tistar.repository.HeartQueryRepository;
 import com.juju.tistar.repository.HeartRepository;
 import com.juju.tistar.repository.PostRepository;
-import com.juju.tistar.request.HeartRequest;
 import com.juju.tistar.response.CancelHeartResponse;
 import com.juju.tistar.response.GetHeartResponse;
 import com.juju.tistar.response.HeartResponse;
