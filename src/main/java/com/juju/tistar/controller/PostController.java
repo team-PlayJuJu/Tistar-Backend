@@ -23,7 +23,7 @@ public class PostController {
 
     @PostMapping("/write")
     public ResponseEntity<WritePostResponse> createPost(
-            @RequestPart("content") String content,
+            @RequestBody String content,
             @RequestPart("images") List<MultipartFile> files) {
         WritePostResponse response = postService.writePost(content, files);
         return ResponseEntity.ok(response);
