@@ -2,18 +2,22 @@ package com.juju.tistar.repository;
 
 import com.juju.tistar.entity.Post;
 import com.juju.tistar.entity.User;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Lock;
+
 
 import java.util.Optional;
 
 @Repository
 public interface UserRepository extends CrudRepository<User, Long> {
     Optional<User> findByName(String name);
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     boolean existsUserByName(String name);
 
     @Query("SELECT post FROM Post post " +
